@@ -35,6 +35,24 @@ function calculate(number1, number2, operator) {
     return result;
 }
 
+function updateDisplay(event) {
+    const btn = event.target;
+    const classes = Array.from(btn.classList);
+    if (classes.includes("number")) {
+        display.textContent += btn.id;
+    }
+    else if (classes.includes("operator")) {
+        display.textContent += ` ${btn.id} `;
+    }
+    else {
+        console.log("Special Button Pressed");
+    }
+}
+
+const display = document.querySelector("#display");
+const btns = document.querySelector("#btns");
+btns.addEventListener("click", updateDisplay);
+
 let number1;
 let operator;
 let number2;
@@ -43,5 +61,4 @@ let displayText = "-10.2 - -2";
 
 [number1, operator, number2] = displayText.split(" ");
 
-const display = document.querySelector("#display");
-display.textContent = calculate(+number1, +number2, operator);
+//display.textContent = calculate(+number1, +number2, operator);

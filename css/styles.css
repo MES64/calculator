@@ -27,6 +27,7 @@ body {
     margin-bottom: 10px;
     padding: 10px;
     border-radius: 5px;
+    height: 80px;
 }
 
 #btns {
@@ -53,10 +54,10 @@ button {
     width: 165px;
 }
 
-.operator {
+.blue {
     background-color: rgb(101, 195, 226);
 }
 
-.delete {
+.orange {
     background-color: rgb(255, 207, 117);
 }
