@@ -39,8 +39,9 @@ let number1;
 let operator;
 let number2;
 
-let display = "-10.2 - -2";
+let displayText = "-10.2 - -2";
 
-[number1, operator, number2] = display.split(" ");
+[number1, operator, number2] = displayText.split(" ");
 
-console.log(calculate(+number1, +number2, operator));
+const display = document.querySelector("#display");
+display.textContent = calculate(+number1, +number2, operator);
