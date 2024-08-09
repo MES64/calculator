@@ -1,7 +1,6 @@
 "use strict";
 
 // List of Bugs
-// - Press 0 then 3 get 03; want just 3
 // - What if input is so long it overflows? Set display field limit
 
 //---------- Calculation ----------//
@@ -84,6 +83,9 @@ function updateDisplay(nextDisplayText) {
 function processInputIfNumber(nextDisplayText) {
     const numberAsString = getNumberFromLatestInput(nextDisplayText);
     if (checkIsValidNumber(numberAsString)) {
+        if (checkIfLeadingZero(numberAsString)) {
+            return removeLeadingZero(nextDisplayText);
+        }
         return nextDisplayText;
     }
     if (checkIsStartOfNegativeNumber(numberAsString)) {
@@ -122,6 +124,10 @@ function removeSpacesAroundMinus() {
     return display.textContent + "-";
 }
 
+function removeLeadingZero(nextDisplayText) {
+    return nextDisplayText.slice(0,-2) + nextDisplayText.slice(-1);
+}
+
 // Check Number
 
 function checkIsValidNumber(numberAsString) {
@@ -138,6 +144,18 @@ function checkIsStartOfDecimal(numberAsString) {
 
 function checkIsNothingAfterDecimal(numberAsString) {
     return numberAsString.slice(-1) === ".";
+}
+
+function checkIfLeadingZero(numberAsString) {
+    let stringOfInterest = numberAsString;
+    // Ignore - and . as they should not affect whether a 0 becomes a leading 0 to remove
+    // So only numbers left really
+    if (numberAsString[0] === "-") stringOfInterest = stringOfInterest.slice(1);
+    if (numberAsString.slice(-1) === ".") stringOfInterest = stringOfInterest.slice(0, -1);
+
+    // Length of 2 is checked as a leading 0 only appears after entering a number after a 0
+    // Do not want to remove a 0 by itself
+    return (stringOfInterest.length === 2) && (stringOfInterest[0] === "0");
 }
 
 // Get Most Recent Number
@@ -207,6 +225,8 @@ function removeLastOperator() {
 function removeLastCharacter() {
     display.textContent = display.textContent.slice(0, -1);
 }
+
+// Buggy Functions
 
 //---------- Main ----------//
 
