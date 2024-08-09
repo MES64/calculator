@@ -1,5 +1,13 @@
 "use strict";
 
+// List of Bugs
+// - If press . repeatedly, get 0.0.0.0.
+// - Press 0 then 3 get 03; want just 3
+// - What if input is so long it overflows? Could let text disappear to left
+//   or give an upper limit to the display field or numbers allowed
+//   or use e notation but this loses number precision as all info is from the display!
+//   I think it is either text disappear to left or display field limit. 
+
 //---------- Calculation ----------//
 
 function plus(number1, number2) {
@@ -51,9 +59,19 @@ function processButtonPress(event) {
     }
     else {
         console.log("Special Button Pressed");
+        specialButtonPressed(btn);
         return;
     }
     updateDisplay(nextDisplayText);
+}
+
+function specialButtonPressed(btn) {
+    if (btn.id === "ac") {
+        allClear();
+    }
+    else if (btn.id === "back") {
+        removeLastSymbol();
+    }
 }
 
 function updateDisplay(nextDisplayText) {
@@ -157,6 +175,37 @@ function checkLastInputIsNumber(nextDisplayText) {
         .split(" ")
         .filter((item) => item !== "");
     return arrayOfInputs.length % 2 !== 0;  // Every odd entry is a number input
+}
+
+// Delete Functions
+
+function allClear() {
+    display.textContent = "";
+}
+
+function removeLastSymbol() {
+    if (checkIfLastCharacterIsSpace()) {
+        removeLastOperator();
+    }
+    else {
+        removeLastCharacter();
+    }
+}
+
+// Check if trying to remove operator
+
+function checkIfLastCharacterIsSpace() {
+    return display.textContent.slice(-1)[0] === " ";
+}
+
+// Remove Symbols
+
+function removeLastOperator() {
+    display.textContent = display.textContent.slice(0, -3);
+}
+
+function removeLastCharacter() {
+    display.textContent = display.textContent.slice(0, -1);
 }
 
 //---------- Main ----------//
