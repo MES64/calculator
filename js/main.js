@@ -1,12 +1,8 @@
 "use strict";
 
 // List of Bugs
-// - If press . repeatedly, get 0.0.0.0.
 // - Press 0 then 3 get 03; want just 3
-// - What if input is so long it overflows? Could let text disappear to left
-//   or give an upper limit to the display field or numbers allowed
-//   or use e notation but this loses number precision as all info is from the display!
-//   I think it is either text disappear to left or display field limit. 
+// - What if input is so long it overflows? Set display field limit
 
 //---------- Calculation ----------//
 
@@ -104,7 +100,7 @@ function processInputIfOperator(nextDisplayText) {
     if (checkIsStartOfNegativeNumber(prevNumberAsString)) {
         return display.textContent;
     }
-    if (checkIsStartOfDecimal(prevNumberAsString)) {
+    if (checkIsNothingAfterDecimal(prevNumberAsString)) {
         return insertZeroAfterDecimal(nextDisplayText);
     }
     return nextDisplayText;
@@ -137,6 +133,10 @@ function checkIsStartOfNegativeNumber(numberAsString) {
 }
 
 function checkIsStartOfDecimal(numberAsString) {
+    return numberAsString === "." || numberAsString === "-.";
+}
+
+function checkIsNothingAfterDecimal(numberAsString) {
     return numberAsString.slice(-1) === ".";
 }
 
