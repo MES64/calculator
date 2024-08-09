@@ -1,8 +1,5 @@
 "use strict";
 
-// List of Bugs
-// - What if input is so long it overflows? Set display field limit
-
 //---------- Calculation ----------//
 
 function plus(number1, number2) {
@@ -47,9 +44,11 @@ function processButtonPress(event) {
 
     let nextDisplayText = display.textContent;
     if (checkButtonIsNumber(btn)) {
+        if (display.textContent.length === 11) return;
         nextDisplayText += btn.id;
     }
     else if (checkButtonIsOperator(btn)) {
+        if (display.textContent.length > 8) return;
         nextDisplayText += ` ${btn.id} `;
     }
     else {
@@ -225,8 +224,6 @@ function removeLastOperator() {
 function removeLastCharacter() {
     display.textContent = display.textContent.slice(0, -1);
 }
-
-// Buggy Functions
 
 //---------- Main ----------//
 
