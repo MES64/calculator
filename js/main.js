@@ -1,5 +1,32 @@
 "use strict";
 
+// ToDo
+// Chain operators
+// Divide by zero should message the display, not throw an error
+// Set limit to output given to display
+
+//---------- Parse Display String ----------//
+
+function parseDisplayToCalculate() {
+    const arrayOfInputs = parseDisplay();
+
+    if (checkIfCanCalculate(arrayOfInputs)) {
+        let number1, operator, number2;
+        [number1, operator, number2] = arrayOfInputs;
+        display.textContent = calculate(+number1, +number2, operator);
+    }
+}
+
+function checkIfCanCalculate(arrayOfInputs) {
+    return (arrayOfInputs.length === 3) && (arrayOfInputs[2] !== "-");
+}
+
+function parseDisplay() {
+    return display.textContent
+        .split(" ")
+        .filter((item) => item !== "");
+}
+
 //---------- Calculation ----------//
 
 function plus(number1, number2) {
@@ -65,6 +92,9 @@ function specialButtonPressed(btn) {
     }
     else if (btn.id === "back") {
         removeLastSymbol();
+    }
+    else if (btn.id === "=") {
+        parseDisplayToCalculate();
     }
 }
 
@@ -230,13 +260,3 @@ function removeLastCharacter() {
 const display = document.querySelector("#display");
 const btns = document.querySelector("#btns");
 btns.addEventListener("click", processButtonPress);
-
-let number1;
-let operator;
-let number2;
-
-let displayText = "-10.2 - -2";
-
-[number1, operator, number2] = displayText.split(" ");
-
-//display.textContent = calculate(+number1, +number2, operator);
