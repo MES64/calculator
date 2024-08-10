@@ -4,6 +4,8 @@
 // Chain operators
 // Divide by zero should message the display, not throw an error
 // Set limit to output given to display
+// Keyboard input
+// Change character limit of display to display scroll
 
 //---------- Parse Display String ----------//
 
@@ -177,14 +179,14 @@ function checkIsNothingAfterDecimal(numberAsString) {
 
 function checkIfLeadingZero(numberAsString) {
     let stringOfInterest = numberAsString;
-    // Ignore - and . as they should not affect whether a 0 becomes a leading 0 to remove
-    // So only numbers left really
+    // Remove "-" at start as it does not affect leading zero check
     if (numberAsString[0] === "-") stringOfInterest = stringOfInterest.slice(1);
-    if (numberAsString.slice(-1) === ".") stringOfInterest = stringOfInterest.slice(0, -1);
-
-    // Length of 2 is checked as a leading 0 only appears after entering a number after a 0
-    // Do not want to remove a 0 by itself
-    return (stringOfInterest.length === 2) && (stringOfInterest[0] === "0");
+    // If have just "0" then need to leave for "0." and "0" cases,
+    // so need to wait for next number at length 2
+    // and then check if it starts with a 0 and ends with a number (0-9)
+    return (stringOfInterest.length === 2) && 
+           (stringOfInterest[0] === "0") && 
+           (stringOfInterest[1] !== ".");
 }
 
 // Get Most Recent Number
