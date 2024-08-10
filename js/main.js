@@ -3,9 +3,19 @@
 // ToDo
 // Chain operators
 // Divide by zero should message the display, not throw an error
-// Set limit to output given to display
+// Set limit to output given to display?
 // Keyboard input
-// Change character limit of display to display scroll
+
+//---------- Read and Write to Display ----------//
+
+function readFromDisplay() {
+    return display.textContent;
+}
+
+function writeToDisplay(finalOutput) {
+    display.textContent = finalOutput;
+    display.scrollLeft = display.scrollWidth;
+}
 
 //---------- Parse Display String ----------//
 
@@ -15,7 +25,7 @@ function parseDisplayToCalculate() {
     if (checkIfCanCalculate(arrayOfInputs)) {
         let number1, operator, number2;
         [number1, operator, number2] = arrayOfInputs;
-        display.textContent = calculate(+number1, +number2, operator);
+        writeToDisplay(calculate(+number1, +number2, operator));
     }
 }
 
@@ -24,7 +34,7 @@ function checkIfCanCalculate(arrayOfInputs) {
 }
 
 function parseDisplay() {
-    return display.textContent
+    return readFromDisplay()
         .split(" ")
         .filter((item) => item !== "");
 }
@@ -71,17 +81,14 @@ function calculate(number1, number2, operator) {
 function processButtonPress(event) {
     const btn = event.target;
 
-    let nextDisplayText = display.textContent;
+    let nextDisplayText = readFromDisplay();
     if (checkButtonIsNumber(btn)) {
-        if (display.textContent.length === 11) return;
         nextDisplayText += btn.id;
     }
     else if (checkButtonIsOperator(btn)) {
-        if (display.textContent.length > 8) return;
         nextDisplayText += ` ${btn.id} `;
     }
     else {
-        console.log("Special Button Pressed");
         specialButtonPressed(btn);
         return;
     }
@@ -108,7 +115,7 @@ function updateDisplay(nextDisplayText) {
     else {
         finalOutput = processInputIfOperator(nextDisplayText);
     }
-    display.textContent = finalOutput;
+    writeToDisplay(finalOutput);
 }
 
 function processInputIfNumber(nextDisplayText) {
@@ -125,13 +132,13 @@ function processInputIfNumber(nextDisplayText) {
     if (checkIsStartOfDecimal(numberAsString)) {
         return insertZeroBeforeDecimal(nextDisplayText);
     }
-    return display.textContent;
+    return readFromDisplay();
 }
 
 function processInputIfOperator(nextDisplayText) {
     const prevNumberAsString = getNumberFromPreviousInput(nextDisplayText);
     if (checkIsStartOfNegativeNumber(prevNumberAsString)) {
-        return display.textContent;
+        return readFromDisplay();
     }
     if (checkIsNothingAfterDecimal(prevNumberAsString)) {
         return insertZeroAfterDecimal(nextDisplayText);
@@ -152,7 +159,7 @@ function insertZeroAfterDecimal(nextDisplayText){
 }
 
 function removeSpacesAroundMinus() {
-    return display.textContent + "-";
+    return readFromDisplay() + "-";
 }
 
 function removeLeadingZero(nextDisplayText) {
@@ -229,7 +236,7 @@ function checkLastInputIsNumber(nextDisplayText) {
 // Delete Functions
 
 function allClear() {
-    display.textContent = "";
+    writeToDisplay("");
 }
 
 function removeLastSymbol() {
@@ -244,17 +251,17 @@ function removeLastSymbol() {
 // Check if trying to remove operator
 
 function checkIfLastCharacterIsSpace() {
-    return display.textContent.slice(-1)[0] === " ";
+    return readFromDisplay().slice(-1)[0] === " ";
 }
 
 // Remove Symbols
 
 function removeLastOperator() {
-    display.textContent = display.textContent.slice(0, -3);
+    writeToDisplay(readFromDisplay().slice(0, -3));
 }
 
 function removeLastCharacter() {
-    display.textContent = display.textContent.slice(0, -1);
+    writeToDisplay(readFromDisplay().slice(0, -1));
 }
 
 //---------- Main ----------//
