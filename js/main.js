@@ -2,7 +2,6 @@
 
 // ToDo
 // Chain operators
-// Divide by zero should message the display, not throw an error
 // Set limit to output given to display?
 // Keyboard input
 
@@ -51,7 +50,7 @@ function multiply(number1, number2) {
     return number1 * number2;
 }
 function divide(number1, number2) {
-    if (number2 === 0) throw new Error("Divide by zero error! (number2 = 0)");
+    if (number2 === 0) return "÷ by 0? How?";
     return number1 / number2;
 }
 
