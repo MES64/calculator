@@ -1,39 +1,46 @@
 "use strict";
 
 // ToDo
-// Chain operators
-// Set limit to output given to display?
-// Keyboard input
+// - Set limit to output given to display
+// - Keyboard input
+// - Bug: If divide by 0 must deal with this; what if try to add to or remove from it?
+//        I think need to treat as special case; must delete and cannot continue other input
 
 //---------- Read and Write to Display ----------//
 
 function readFromDisplay() {
-    return display.textContent;
+    return checkIfEqualsPresent() ? display.textContent.slice(2) : display.textContent;
 }
 
 function writeToDisplay(finalOutput) {
-    display.textContent = finalOutput;
+    display.textContent = (checkIfEqualsPresent() && finalOutput[0] !== "=") ? `= ${finalOutput}` : finalOutput;
     display.scrollLeft = display.scrollWidth;
 }
 
 //---------- Parse Display String ----------//
 
-function parseDisplayToCalculate() {
-    const arrayOfInputs = parseDisplay();
+function parseToCalculate(calculationString) {
+    const arrayOfInputs = parseInput(calculationString);
 
     if (checkIfCanCalculate(arrayOfInputs)) {
-        let number1, operator, number2;
-        [number1, operator, number2] = arrayOfInputs;
-        writeToDisplay(calculate(+number1, +number2, operator));
+        let number1, operator1, number2, operator2;
+        [number1, operator1, number2, operator2] = arrayOfInputs;
+
+        if (operator2 === undefined) {
+            writeToDisplay(`= ${calculate(+number1, +number2, operator1)}`);
+        }
+        else {
+            writeToDisplay(`= ${calculate(+number1, +number2, operator1)} ${operator2} `);
+        }
     }
 }
 
 function checkIfCanCalculate(arrayOfInputs) {
-    return (arrayOfInputs.length === 3) && (arrayOfInputs[2] !== "-");
+    return (arrayOfInputs.length > 2) && (arrayOfInputs[2] !== "-");
 }
 
-function parseDisplay() {
-    return readFromDisplay()
+function parseInput(calculationString) {
+    return calculationString
         .split(" ")
         .filter((item) => item !== "");
 }
@@ -80,18 +87,20 @@ function calculate(number1, number2, operator) {
 function processButtonPress(event) {
     const btn = event.target;
 
-    let nextDisplayText = readFromDisplay();
     if (checkButtonIsNumber(btn)) {
-        nextDisplayText += btn.id;
+        if (checkIfEditAnswer()) {
+            allClear();
+        }
+        const nextDisplayText = readFromDisplay() + btn.id;
+        updateDisplay(nextDisplayText);
     }
     else if (checkButtonIsOperator(btn)) {
-        nextDisplayText += ` ${btn.id} `;
+        const nextDisplayText = readFromDisplay() + ` ${btn.id} `;
+        updateDisplay(nextDisplayText);
     }
     else {
         specialButtonPressed(btn);
-        return;
     }
-    updateDisplay(nextDisplayText);
 }
 
 function specialButtonPressed(btn) {
@@ -102,7 +111,7 @@ function specialButtonPressed(btn) {
         removeLastSymbol();
     }
     else if (btn.id === "=") {
-        parseDisplayToCalculate();
+        parseToCalculate(readFromDisplay());
     }
 }
 
@@ -111,10 +120,23 @@ function updateDisplay(nextDisplayText) {
     if (checkLastInputIsNumber(nextDisplayText)) {
         finalOutput = processInputIfNumber(nextDisplayText);
     }
-    else {
+    else {  // Last input is operator
         finalOutput = processInputIfOperator(nextDisplayText);
     }
-    writeToDisplay(finalOutput);
+
+    if (checkIfSecondOperator(finalOutput)) {
+        parseToCalculate(finalOutput);
+    }
+    else {
+        writeToDisplay(finalOutput);
+    }
+}
+
+function checkIfSecondOperator(finalOutput) {
+    return finalOutput
+        .split(" ")
+        .filter((item) => item !== "")
+        .length === 4;
 }
 
 function processInputIfNumber(nextDisplayText) {
@@ -235,12 +257,15 @@ function checkLastInputIsNumber(nextDisplayText) {
 // Delete Functions
 
 function allClear() {
-    writeToDisplay("");
+    display.textContent = "";
 }
 
 function removeLastSymbol() {
     if (checkIfLastCharacterIsSpace()) {
         removeLastOperator();
+    }
+    else if (checkIfEditAnswer()) {
+        allClear();
     }
     else {
         removeLastCharacter();
@@ -251,6 +276,23 @@ function removeLastSymbol() {
 
 function checkIfLastCharacterIsSpace() {
     return readFromDisplay().slice(-1)[0] === " ";
+}
+
+// Checks for =
+
+function checkIfEditAnswer() {
+    return checkIfEqualsPresent() && checkIfEditFirstNumber();
+}
+
+function checkIfEqualsPresent() {
+    return display.textContent[0] === "=";
+}
+
+function checkIfEditFirstNumber() {
+    const arrayOfInputs = readFromDisplay()
+        .split(" ")
+        .filter((item) => item !== "");
+    return arrayOfInputs.length === 1;
 }
 
 // Remove Symbols
