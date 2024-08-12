@@ -3,8 +3,6 @@
 // ToDo
 // - Set limit to output given to display
 // - Keyboard input
-// - Bug: If divide by 0 must deal with this; what if try to add to or remove from it?
-//        I think need to treat as special case; must delete and cannot continue other input
 
 //---------- Read and Write to Display ----------//
 
@@ -26,11 +24,19 @@ function parseToCalculate(calculationString) {
         let number1, operator1, number2, operator2;
         [number1, operator1, number2, operator2] = arrayOfInputs;
 
+        let result;
         if (operator2 === undefined) {
-            writeToDisplay(`= ${calculate(+number1, +number2, operator1)}`);
+            result = `= ${calculate(+number1, +number2, operator1)}`;
         }
         else {
-            writeToDisplay(`= ${calculate(+number1, +number2, operator1)} ${operator2} `);
+            result = `= ${calculate(+number1, +number2, operator1)} ${operator2} `;
+        }
+
+        if (result.includes("= ÷ by 0?")) {
+            writeToDisplay("= ÷ by 0?");
+        }
+        else {
+            writeToDisplay(result);
         }
     }
 }
@@ -57,7 +63,7 @@ function multiply(number1, number2) {
     return number1 * number2;
 }
 function divide(number1, number2) {
-    if (number2 === 0) return "÷ by 0? How?";
+    if (number2 === 0) return "÷ by 0?";
     return number1 / number2;
 }
 
@@ -86,6 +92,10 @@ function calculate(number1, number2, operator) {
 
 function processButtonPress(event) {
     const btn = event.target;
+
+    if (checkDivideByZeroError()) {
+        allClear();
+    }
 
     if (checkButtonIsNumber(btn)) {
         if (checkIfEditAnswer()) {
@@ -293,6 +303,10 @@ function checkIfEditFirstNumber() {
         .split(" ")
         .filter((item) => item !== "");
     return arrayOfInputs.length === 1;
+}
+
+function checkDivideByZeroError() {
+    return display.textContent === "= ÷ by 0?";
 }
 
 // Remove Symbols
