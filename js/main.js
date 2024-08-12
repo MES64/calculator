@@ -1,7 +1,6 @@
 "use strict";
 
 // ToDo
-// - Set limit to output given to display
 // - Keyboard input
 
 //---------- Read and Write to Display ----------//
@@ -54,17 +53,17 @@ function parseInput(calculationString) {
 //---------- Calculation ----------//
 
 function plus(number1, number2) {
-    return number1 + number2;
+    return formatResult(number1 + number2);
 }
 function minus(number1, number2) {
-    return number1 - number2;
+    return formatResult(number1 - number2);
 }
 function multiply(number1, number2) {
-    return number1 * number2;
+    return formatResult(number1 * number2);
 }
 function divide(number1, number2) {
     if (number2 === 0) return "÷ by 0?";
-    return number1 / number2;
+    return formatResult(number1 / number2);
 }
 
 function calculate(number1, number2, operator) {
@@ -86,6 +85,28 @@ function calculate(number1, number2, operator) {
             throw new Error("Invalid Operator (operator1): Must be +, -, x, ÷");
     }
     return result;
+}
+
+function formatResult(result) {
+    if (checkIfResultTooLong(result)) {
+        result = roundToDecimalPlaces(result, 5);
+    }
+    if (checkIfResultTooLong(result)) {
+        result = convertToExponential(result, 3);
+    }
+    return result;
+}
+
+function checkIfResultTooLong(result) {
+    return result.toString().length > 9;
+}
+
+function roundToDecimalPlaces(result, decimalPlaces) {
+    return +result.toExponential(decimalPlaces);
+}
+
+function convertToExponential(result, decimalPlaces) {
+    return result.toExponential(decimalPlaces);
 }
 
 //---------- Button Input Processing: Main Logic ----------//
