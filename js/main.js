@@ -1,7 +1,37 @@
 "use strict";
 
-// ToDo
-// - Keyboard input
+//---------- Keyboard Event Listener ----------//
+
+function convertKeyPressToButtonPress(event) {
+    let btn;
+    switch(event.key) {
+        case ".":
+            btn = document.querySelector("#point");
+            break;
+        case "=":
+        case "Enter":
+            btn = document.querySelector("#equals");
+            break;
+        case "+":
+            btn = document.querySelector("#plus");
+            break;
+        case "*":
+            btn = document.querySelector("#b-x");
+            break;
+        case "/":
+            btn = document.querySelector("#divide");
+            break;
+        default:
+            btn = document.querySelector(`#b-${event.key}`);
+    }
+
+    if (btn !== null) {
+        const clickEvent = new MouseEvent("click", {
+            bubbles: true
+        });
+        btn.dispatchEvent(clickEvent);
+    }
+}
 
 //---------- Read and Write to Display ----------//
 
@@ -14,7 +44,7 @@ function writeToDisplay(finalOutput) {
     display.scrollLeft = display.scrollWidth;
 }
 
-//---------- Parse Display String ----------//
+//---------- Parse Calculation String ----------//
 
 function parseToCalculate(calculationString) {
     const arrayOfInputs = parseInput(calculationString);
@@ -122,11 +152,11 @@ function processButtonPress(event) {
         if (checkIfEditAnswer()) {
             allClear();
         }
-        const nextDisplayText = readFromDisplay() + btn.id;
+        const nextDisplayText = readFromDisplay() + btn.textContent;
         updateDisplay(nextDisplayText);
     }
     else if (checkButtonIsOperator(btn)) {
-        const nextDisplayText = readFromDisplay() + ` ${btn.id} `;
+        const nextDisplayText = readFromDisplay() + ` ${btn.textContent} `;
         updateDisplay(nextDisplayText);
     }
     else {
@@ -135,13 +165,13 @@ function processButtonPress(event) {
 }
 
 function specialButtonPressed(btn) {
-    if (btn.id === "ac") {
+    if (btn.id === "b-Delete") {
         allClear();
     }
-    else if (btn.id === "back") {
+    else if (btn.id === "b-Backspace") {
         removeLastSymbol();
     }
-    else if (btn.id === "=") {
+    else if (btn.id === "equals") {
         parseToCalculate(readFromDisplay());
     }
 }
@@ -161,13 +191,6 @@ function updateDisplay(nextDisplayText) {
     else {
         writeToDisplay(finalOutput);
     }
-}
-
-function checkIfSecondOperator(finalOutput) {
-    return finalOutput
-        .split(" ")
-        .filter((item) => item !== "")
-        .length === 4;
 }
 
 function processInputIfNumber(nextDisplayText) {
@@ -199,6 +222,15 @@ function processInputIfOperator(nextDisplayText) {
 }
 
 //---------- Button Input Processing: Small Helper Functions ----------//
+
+// Check if chaining calculations
+
+function checkIfSecondOperator(finalOutput) {
+    return finalOutput
+        .split(" ")
+        .filter((item) => item !== "")
+        .length === 4;
+}
 
 // Edit Next Display Text
 
@@ -344,4 +376,7 @@ function removeLastCharacter() {
 
 const display = document.querySelector("#display");
 const btns = document.querySelector("#btns");
+const body = document.querySelector("body");
+
 btns.addEventListener("click", processButtonPress);
+body.addEventListener("keydown", convertKeyPressToButtonPress);
